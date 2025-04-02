@@ -22,11 +22,12 @@ class Square
 
 		void		shuffle_board();
 		void		init_solved_pos();
+		bool		check_solvable();
 		
 		bool		make_move(e_move move);
 		bool		check_pos(const Pos &pos) const;
 		
-		void		check_board();
+		bool		check_board();
 		void		print_board() const;
 
 		Pos			get_pos(const uint num) const;
