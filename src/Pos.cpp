@@ -6,12 +6,12 @@ std::ostream	&operator<<(std::ostream& o, const Pos& pos)
 	return (o);
 }
 
-bool	Pos::operator==(const Pos &pos)
+bool	Pos::operator==(const Pos &pos) const
 {
 	return (this->x == pos.x && this->y == pos.y);
 }
 
-bool	Pos::operator!=(const Pos &pos)
+bool	Pos::operator!=(const Pos &pos) const
 {
 	return (this->x != pos.x && this->y != pos.y);
 }
