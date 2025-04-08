@@ -35,7 +35,6 @@ Square::Square(std::vector<uint> &board): _n(board.size() - 1), _len_side(sqrt(b
 	// std::cout << "_len_side:\t" << _len_side << std::endl;
 }
 
-
 Square::~Square() {}
 
 // Swaps the 0 piece up up, down, left or right

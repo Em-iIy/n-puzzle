@@ -17,13 +17,21 @@ int main(const int argc, char *argv[])
 	}
 	try
 	{
-		std::vector<std::vector<int>> grid = parse_puzzle(argv[1]);
-		int	n = std::stoi(argv[1]);
-		if (n < 1)
-			throw std::runtime_error("n must be greater than 0");
-		Square sq(n);
-		sq.check_board();
-		sq.print_board();
+		std::vector<int> grid = parse_puzzle(argv[1]);
+		int i = 0;
+		for (auto v: grid) {
+			std::cout << v << " ";
+			i++;
+			if (i % 3 == 0) {
+				std::cout << std::endl;
+			}
+		}
+		// int	n = std::stoi(argv[1]);
+		// if (n < 1)
+		// 	throw std::runtime_error("n must be greater than 0");
+		// Square sq(n);
+		// sq.check_board();
+		// sq.print_board();
 	}
 	catch(const std::exception& e)
 	{
