@@ -14,8 +14,18 @@ namespace erand
 	{
 		return (std::uniform_real_distribution<double>(f1, f2));
 	}
-
+	
 	double	rand(std::uniform_real_distribution<double> &gen)
+	{
+		return (gen(mt));
+	}
+	
+	std::uniform_int_distribution<int>	generator(const int n1, const int n2)
+	{
+		return (std::uniform_int_distribution<int>(n1, n2));
+	}
+	
+	int	rand(std::uniform_int_distribution<int> &gen)
 	{
 		return (gen(mt));
 	}

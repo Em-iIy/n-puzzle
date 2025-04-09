@@ -11,28 +11,29 @@
 Square::Square() {}
 
 // Initialize the square with the lenght of the side
-Square::Square(uint n): _n((n * n) - 1), _len_side(n)
+Square::Square(uint n, shared_pos_vec final_positions): _n((n * n) - 1), _len_side(n), _final_positions(final_positions)
 {
 	_board.reserve(_n + 1);
 	for (uint i = 0; i < _n + 1; ++i)
 	{
 		_board.push_back(i);
 	}
-	init_solved_pos();
 	shuffle_board();
+	// Find position of the 0 piece
 	_0 = get_pos(0);
 }
 
 // Initialize the square using a vector of unsigned ints
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Use this constructor after parsing in the file, I haven't tested if this works
-Square::Square(std::vector<uint> &board): _n(board.size() - 1), _len_side(sqrt(board.size() - 1)), _board(board)
+Square::Square(std::vector<uint> &board, shared_pos_vec final_positions): _n(board.size() - 1), _len_side(sqrt(board.size())), _board(board), _final_positions(final_positions)
 {
-	init_solved_pos();
 	// Find position of the 0 piece
 	_0 = get_pos(0);
-	// std::cout << "_n:\t" << _n << std::endl;
-	// std::cout << "_len_side:\t" << _len_side << std::endl;
+}
+
+Square::Square(const Square &src): _n(src._n), _len_side(src._len_side), _0(src._0), _board(src._board), _final_positions(src._final_positions)
+{
 }
 
 Square::~Square() {}
@@ -79,36 +80,56 @@ void		Square::shuffle_board()
 }
 
 // Initializes the positions for a solved board
-void		Square::init_solved_pos()
+shared_pos_vec init_solved_pos(uint len_side)
 {
-	int left = 0;
-	int right = _len_side - 1;
-	int top = 0;
-	int bottom = _len_side - 1;
-	int	i = 0;
+	shared_pos_vec	final_positions = std::make_shared<std::vector<Pos>>(len_side * len_side);
+	int									left = 0;
+	int									right = len_side - 1;
+	int									top = 0;
+	int									bottom = len_side - 1;
+	int									i = 0;
+	uint								n = len_side * len_side;
 	
-	_final_positions = std::vector<Pos>(_n + 1);
 	while (top <= bottom && left <= right)
 	{
 		for (int x = left; x <= right; ++x)
-			_final_positions[++i % (_n + 1)] = Pos(x, top);
+			(*final_positions)[++i % n] = Pos(x, top);
 		top++;
 		for (int y = top; y <= bottom; ++y)
-			_final_positions[++i % (_n + 1)] = Pos(right, y);
+			(*final_positions)[++i % n] = Pos(right, y);
 		right--;
 		if (top <= bottom)
 		{
 			for (int x = right; x >= left; --x)
-				_final_positions[++i % (_n + 1)] = Pos(x, bottom);
+				(*final_positions)[++i % n] = Pos(x, bottom);
 			bottom--;
 		}
 		if (left <= right)
 		{
 			for (int y = bottom; y >= top; --y)
-				_final_positions[++i % (_n + 1)] = Pos(left, y);
+				(*final_positions)[++i % n] = Pos(left, y);
 			left++;
 		}
 	}
+	return (final_positions);
+}
+
+bool		Square::check_solvable()
+{
+	int count = 0;
+	for (int i = 0; i < _board.size(); ++i)
+	{
+		if (_board[i] == 0)
+			continue ;
+		for (int j = 0; i + j < _board.size(); ++j)
+		{
+			if (_board[i + j] == 0)
+				continue ;
+			if (_board[i] > _board[i + j])
+				count++;
+		}
+	}
+	return ((count % 2));
 }
 
 // Check if positions is valid within the board's coordinates
@@ -134,7 +155,7 @@ void	Square::print_board() const
 		{
 			Pos pos(x, y);
 			uint num = get_cnum(pos);
-			if (_final_positions[num] == pos)
+			if ((*_final_positions)[num] == pos)
 				std::cout << BG_GREEN;
 			std::cout << get_cnum(pos) << RESET << "\t";
 		}
@@ -143,15 +164,18 @@ void	Square::print_board() const
 }
 
 // Count how many numbers are in the right position
-void	Square::check_board()
+bool	Square::check_board()
 {
 	int count = 0;
-	for (uint i = 0; i < _final_positions.size(); ++i)
+	for (uint i = 0; i < _final_positions->size(); ++i)
 	{
-		if (get_cnum(_final_positions[i]) == i)
+		if (get_cnum((*_final_positions)[i]) == i)
 			count++;
 	}
-	std::cout << "Solved tiles: " << count << std::endl;
+	std::cout << "Solved tiles: " << count << "/" << _n + 1 << std::endl;
+	if (count == _n + 1)
+		return (true);
+	return (false);
 }
 
 Pos			Square::get_pos(const uint num) const
