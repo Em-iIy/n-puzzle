@@ -5,17 +5,19 @@
 #include "Square.hpp"
 #include "rand.hpp"
 #include "timer.hpp"
+#include "Parser.hpp"
 
-int main(int argc, char *argv[])
+int main(const int argc, char *argv[])
 {
 	erand::seed();
 	if (argc != 2)
 	{
-		std::cerr << "Invalid usage: n-puzzle <n>" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " <filename>\n";
 		return (1);
 	}
 	try
 	{
+		std::vector<std::vector<int>> grid = parse_puzzle(argv[1]);
 		int	n = std::stoi(argv[1]);
 
 		if (n < 1)
