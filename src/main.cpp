@@ -17,7 +17,7 @@ int main(const int argc, char *argv[])
 	}
 	try
 	{
-		std::vector<std::vector<int>> grid = parse_puzzle(argv[1]);
+		std::vector<int> grid = parse_puzzle(argv[1]);
 		int	n = std::stoi(argv[1]);
 
 		if (n < 1)
