@@ -8,6 +8,6 @@
 #include <vector>
 #include <string>
 
-std::vector<int> parse_puzzle(const std::string& filename);
+std::vector<uint> parse_puzzle(const std::string& filename);
 
 #endif //PARSER_H
