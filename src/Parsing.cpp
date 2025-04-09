@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <stdexcept>
 
-std::vector<int> parse_puzzle(const std::string& filename)
+std::vector<uint> parse_puzzle(const std::string& filename)
 {
     std::ifstream file(filename);
     if (!file.is_open())
@@ -49,7 +49,7 @@ std::vector<int> parse_puzzle(const std::string& filename)
     if (lines.size() < static_cast<size_t>(N + 1))
         throw std::invalid_argument("Insufficient lines for grid");
 
-    std::vector<int> grid(N * N);
+    std::vector<uint> grid(N * N);
     std::unordered_set<int> seen;
     int idx = 0;
 
