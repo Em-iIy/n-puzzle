@@ -22,8 +22,9 @@ int main(const int argc, char *argv[])
 		if (n < 1)
 			throw std::runtime_error("n must be greater than 0");
 		Square sq(n);
-		sq.check_board();
 		sq.print_board();
+		if (!sq.check_solvable())
+			throw std::runtime_error("Puzzle is not solvable!");
 	}
 	catch(const std::exception& e)
 	{

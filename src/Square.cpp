@@ -18,21 +18,20 @@ Square::Square(uint n): _n((n * n) - 1), _len_side(n)
 	{
 		_board.push_back(i);
 	}
-	init_solved_pos();
 	shuffle_board();
+	init_solved_pos();
+	// Find position of the 0 piece
 	_0 = get_pos(0);
 }
 
 // Initialize the square using a vector of unsigned ints
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Use this constructor after parsing in the file, I haven't tested if this works
-Square::Square(std::vector<uint> &board): _n(board.size() - 1), _len_side(sqrt(board.size() - 1)), _board(board)
+Square::Square(std::vector<uint> &board): _n(board.size() - 1), _len_side(sqrt(board.size())), _board(board)
 {
 	init_solved_pos();
 	// Find position of the 0 piece
 	_0 = get_pos(0);
-	// std::cout << "_n:\t" << _n << std::endl;
-	// std::cout << "_len_side:\t" << _len_side << std::endl;
 }
 
 
@@ -112,6 +111,24 @@ void		Square::init_solved_pos()
 	}
 }
 
+bool		Square::check_solvable()
+{
+	int count = 0;
+	for (int i = 0; i < _board.size(); ++i)
+	{
+		if (_board[i] == 0)
+			continue ;
+		for (int j = 0; i + j < _board.size(); ++j)
+		{
+			if (_board[i + j] == 0)
+				continue ;
+			if (_board[i] > _board[i + j])
+				count++;
+		}
+	}
+	return ((count % 2));
+}
+
 // Check if positions is valid within the board's coordinates
 bool		Square::check_pos(const Pos &pos) const
 {
@@ -144,7 +161,7 @@ void	Square::print_board() const
 }
 
 // Count how many numbers are in the right position
-void	Square::check_board()
+bool	Square::check_board()
 {
 	int count = 0;
 	for (uint i = 0; i < _final_positions.size(); ++i)
@@ -152,7 +169,10 @@ void	Square::check_board()
 		if (get_cnum(_final_positions[i]) == i)
 			count++;
 	}
-	std::cout << "Solved tiles: " << count << std::endl;
+	std::cout << "Solved tiles: " << count << "/" << _n + 1 << std::endl;
+	if (count == _n + 1)
+		return (true);
+	return (false);
 }
 
 Pos			Square::get_pos(const uint num) const
