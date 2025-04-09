@@ -7,6 +7,7 @@ FILES_SRCS =	main.cpp \
 				Pos.cpp \
 				timer.cpp \
 				rand.cpp \
+				Parsing.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 
