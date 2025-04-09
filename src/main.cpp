@@ -17,9 +17,13 @@ int main(int argc, char *argv[])
 	try
 	{
 		int	n = std::stoi(argv[1]);
+
 		if (n < 1)
 			throw std::runtime_error("n must be greater than 0");
-		Square sq(n);
+		shared_pos_vec	final_positions = init_solved_pos(n);
+		Square sq(n, final_positions);
+		while (!sq.check_solvable())
+			sq = Square(n, final_positions);
 		sq.print_board();
 		if (!sq.check_solvable())
 			throw std::runtime_error("Puzzle is not solvable!");
@@ -29,5 +33,4 @@ int main(int argc, char *argv[])
 		std::cerr<< "ERROR: " << e.what() << '\n';
 		return (1);
 	}
-	
 }
