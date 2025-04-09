@@ -41,13 +41,13 @@ int main(const int argc, char *argv[])
 				sq = Square(n, final_positions);
 		}
 		else
-			throw std::runtime_error("invalid usage\nOption " + opt + " does not exist.");
-		sq.print_board();
-		if (!sq.check_solvable())
 		{
 			usage(argv[0]);
-			throw std::runtime_error("Puzzle is not solvable!");
+			throw std::runtime_error("invalid usage\nOption " + opt + " does not exist.");
 		}
+		sq.print_board();
+		if (!sq.check_solvable())
+			throw std::runtime_error("Puzzle is not solvable!");
 	}
 	catch(const std::exception& e)
 	{
