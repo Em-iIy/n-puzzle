@@ -1,8 +1,10 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include "Pos.hpp"
+#include "types.hpp"
 
 enum e_move
 {
@@ -16,12 +18,12 @@ class Square
 {
 	public:
 		Square();
-		Square(uint n);
-		Square(std::vector<uint> &board);
+		Square(uint n, shared_pos_vec final_positions);
+		Square(std::vector<uint> &board, shared_pos_vec final_positions);
+		Square(const Square &src);
 		~Square();
 
 		void		shuffle_board();
-		void		init_solved_pos();
 		bool		check_solvable();
 		
 		bool		make_move(e_move move);
@@ -40,6 +42,8 @@ class Square
 		uint				_len_side;
 		Pos					_0;
 		std::vector<uint>	_board;
-		std::vector<Pos>	_final_positions;
+		shared_pos_vec		_final_positions;
 
 };
+
+shared_pos_vec init_solved_pos(uint len_side);
