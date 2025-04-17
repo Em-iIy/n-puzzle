@@ -124,12 +124,6 @@ int main(const int argc, char *argv[])
 	}
 	try
 	{
-		// Temp
-		std::vector<int> snail_goal = {
-			1, 2, 3,
-			8, 0, 4,
-			7, 6, 5
-		};
 		Square	sq;
 		std::string opt = argv[1];
 		if (opt == "-f")
@@ -144,7 +138,7 @@ int main(const int argc, char *argv[])
 				throw std::runtime_error("n must be greater than 0");
 			shared_pos_vec final_positions = init_solved_pos(n);
 			sq = Square(n, final_positions);
-			while (!sq.check_solvable(snail_goal))
+			while (!sq.check_solvable())
 				sq = Square(n, final_positions);
 		}
 		else
@@ -153,7 +147,7 @@ int main(const int argc, char *argv[])
 			throw std::runtime_error("invalid usage\nOption " + opt + " does not exist.");
 		}
 		sq.print_board();
-		if (!sq.check_solvable(snail_goal))
+		if (!sq.check_solvable())
 			throw std::runtime_error("Puzzle is not solvable!");
 		a_star(sq);
 	}

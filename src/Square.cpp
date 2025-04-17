@@ -127,44 +127,26 @@ shared_pos_vec init_solved_pos(uint len_side)
 	return (final_positions);
 }
 
-bool		Square::check_solvable()
+bool Square::check_solvable() // REWRITE
 {
-	int count = 0;
-	for (int i = 0; i < _board.size(); ++i)
-	{
-		if (_board[i] == 0)
-			continue ;
-		for (int j = 1; i + j < _board.size(); ++j)
-		{
-			if (_board[i + j] == 0)
-				continue ;
-			if (_board[i] > _board[i + j])
-				count++;
-		}
-	}
-	return (count % 2 == 0);
-}
-
-bool Square::check_solvable(const std::vector<int>& goal) // REWRITE
-{
-	std::unordered_map<int, int> goal_position;
 	std::vector<int> remapped;
 
-	// Step 1: Map each tile to its index in the goal (excluding 0)
-	for (int i = 0; i < goal.size(); ++i)
+	// Map: goal position -> flat index
+	std::vector<int> goal_indices(_board.size()); // value -> flattened index
+	for (int val = 0; val < _final_positions->size(); ++val)
 	{
-		if (goal[i] != 0)
-			goal_position[goal[i]] = i;
+		const Pos& p = (*_final_positions)[val];
+		goal_indices[val] = p.y * _len_side + p.x;
 	}
 
-	// Step 2: Remap current board to goal indices
+	// Remap current board values to their goal indices
 	for (int val : _board)
 	{
 		if (val != 0)
-			remapped.push_back(goal_position[val]);
+			remapped.push_back(goal_indices[val]);
 	}
 
-	// Step 3: Count inversions in remapped vector
+	// Count inversions in remapped vector
 	int inversions = 0;
 	for (int i = 0; i < remapped.size(); ++i)
 	{
@@ -175,13 +157,17 @@ bool Square::check_solvable(const std::vector<int>& goal) // REWRITE
 		}
 	}
 
-	int width = static_cast<int>(sqrt(_board.size()));
-	int blank_row_from_bottom = width - (std::find(_board.begin(), _board.end(), 0) - _board.begin()) / width;
-
-	if (width % 2 != 0)
+	// Apply solvability rules
+	if (_len_side % 2 != 0)
+	{
+		// Odd grid: solvable if inversion count is even
 		return inversions % 2 == 0;
+	}
 	else
-		return (blank_row_from_bottom % 2 == 0) != (inversions % 2 == 0);
+	{
+		// Even grid: solvable if blank row from bottom and inversion parity are opposite
+		return (_len_side - _0.y % 2 == 0) != (inversions % 2 == 0);
+	}
 }
 
 // Check if positions is valid within the board's coordinates
