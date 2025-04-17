@@ -8,6 +8,8 @@
 #include "rand.hpp"
 #include "colour.h"
 
+#include <unordered_map>
+
 Square::Square() {}
 
 // Initialize the square with the lenght of the side
@@ -67,6 +69,17 @@ bool		Square::make_move(e_move move)
 	return (true);
 }
 
+int			Square::hamming_distance()
+{
+	int count = 0;
+	for (uint i = 1; i < _final_positions->size(); ++i)
+	{
+		if (get_cnum((*_final_positions)[i]) != i)
+			count++;
+	}
+	return (count * 10);
+}
+
 // Randomly shuffle the board's numbers
 void		Square::shuffle_board()
 {
@@ -121,7 +134,7 @@ bool		Square::check_solvable()
 	{
 		if (_board[i] == 0)
 			continue ;
-		for (int j = 0; i + j < _board.size(); ++j)
+		for (int j = 1; i + j < _board.size(); ++j)
 		{
 			if (_board[i + j] == 0)
 				continue ;
@@ -129,7 +142,46 @@ bool		Square::check_solvable()
 				count++;
 		}
 	}
-	return ((count % 2));
+	return (count % 2 == 0);
+}
+
+bool Square::check_solvable(const std::vector<int>& goal) // REWRITE
+{
+	std::unordered_map<int, int> goal_position;
+	std::vector<int> remapped;
+
+	// Step 1: Map each tile to its index in the goal (excluding 0)
+	for (int i = 0; i < goal.size(); ++i)
+	{
+		if (goal[i] != 0)
+			goal_position[goal[i]] = i;
+	}
+
+	// Step 2: Remap current board to goal indices
+	for (int val : _board)
+	{
+		if (val != 0)
+			remapped.push_back(goal_position[val]);
+	}
+
+	// Step 3: Count inversions in remapped vector
+	int inversions = 0;
+	for (int i = 0; i < remapped.size(); ++i)
+	{
+		for (int j = i + 1; j < remapped.size(); ++j)
+		{
+			if (remapped[i] > remapped[j])
+				inversions++;
+		}
+	}
+
+	int width = static_cast<int>(sqrt(_board.size()));
+	int blank_row_from_bottom = width - (std::find(_board.begin(), _board.end(), 0) - _board.begin()) / width;
+
+	if (width % 2 != 0)
+		return inversions % 2 == 0;
+	else
+		return (blank_row_from_bottom % 2 == 0) != (inversions % 2 == 0);
 }
 
 // Check if positions is valid within the board's coordinates
@@ -146,17 +198,19 @@ bool		Square::check_pos(const Pos &pos) const
 void	Square::print_board() const
 {
 	for (uint x = 0; x < _len_side; ++x)
-		std::cout << "\t" << x;
+		std::cout << "\t" << BG_BLUE << x << RESET;
 	std::cout << std::endl;
 	for (uint y = 0; y < _len_side; ++y)
 	{
-		std::cout << y << "\t";
+		std::cout << BG_BLUE << y << RESET << "\t";
 		for (uint x = 0; x < _len_side; ++x)
 		{
 			Pos pos(x, y);
 			uint num = get_cnum(pos);
 			if ((*_final_positions)[num] == pos)
 				std::cout << BG_GREEN;
+			if (num == 0)
+				std::cout << BG_PINK;
 			std::cout << get_cnum(pos) << RESET << "\t";
 		}
 		std::cout << std::endl;
@@ -172,7 +226,6 @@ bool	Square::check_board()
 		if (get_cnum((*_final_positions)[i]) == i)
 			count++;
 	}
-	std::cout << "Solved tiles: " << count << "/" << _n + 1 << std::endl;
 	if (count == _n + 1)
 		return (true);
 	return (false);
@@ -207,4 +260,16 @@ const uint	&Square::get_cnum(const Pos &pos) const
 void		Square::set_num(const Pos &pos, const uint num)
 {
 	get_num(pos) = num;
+}
+
+bool	Square::operator==(const Square &rhs) const
+{
+	if (_0 != rhs._0)
+		return (false);
+	return (_board == rhs._board);
+}
+
+bool	Square::operator!=(const Square &rhs) const
+{
+	return (_board != rhs._board);
 }
