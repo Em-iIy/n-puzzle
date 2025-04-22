@@ -24,6 +24,7 @@ class Square
 		~Square();
 
 		int			hamming_distance();
+		int			manhattan_distance() const;
 
 		void		shuffle_board();
 		bool		check_solvable();

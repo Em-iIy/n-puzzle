@@ -80,6 +80,24 @@ int			Square::hamming_distance()
 	return (count * 10);
 }
 
+int			Square::manhattan_distance() const {
+	int count = 0;
+	for (uint i = 1; i <= _n; ++i)
+	{
+		const Pos curr = get_pos(i);
+		const Pos goal = (*_final_positions)[i];
+
+		const int curr_x = static_cast<int>(curr.x);
+		const int curr_y = static_cast<int>(curr.y);
+		const int goal_x = static_cast<int>(goal.x);
+		const int goal_y = static_cast<int>(goal.y);
+
+		const int distance = std::abs(curr_x - goal_x) + std::abs(curr_y - goal_y);
+		count += distance;
+	}
+	return count;
+}
+
 // Randomly shuffle the board's numbers
 void		Square::shuffle_board()
 {
