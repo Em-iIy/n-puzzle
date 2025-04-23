@@ -9,6 +9,7 @@ FILES_SRCS =	main.cpp \
 				rand.cpp \
 				Parsing.cpp \
 				Node.cpp \
+				AStar.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 

@@ -44,6 +44,7 @@ class Square
 		bool	operator==(const Square &rhs) const;
 		bool	operator!=(const Square &rhs) const;
 	
+		friend class AStar;
 	private:
 		uint				_n;
 		uint				_len_side;

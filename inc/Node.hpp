@@ -18,3 +18,8 @@ class Node
 
 		
 };
+
+bool operator>(const Node &a, const Node &b)
+{
+	return a._f > b._f;
+}

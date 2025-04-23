@@ -11,6 +11,7 @@
 #include "rand.hpp"
 #include "timer.hpp"
 #include "Parser.hpp"
+#include "AStar.hpp"
 
 void	usage(const std::string &arg0)
 {
@@ -149,7 +150,30 @@ int main(const int argc, char *argv[])
 		sq.print_board();
 		if (!sq.check_solvable())
 			throw std::runtime_error("Puzzle is not solvable!");
-		a_star(sq);
+		// a_star(sq);
+		sq.print_board();
+		std::cout << "Solving puzzle...\n";
+
+		timer::start();
+		auto solution = AStar::solve(sq);
+		double time_elapsed = timer::ms_elapsed();
+
+		if (!solution.empty())
+		{
+			std::cout << "solution found in " << time_elapsed << " ms\n";
+			std::cout << "moves required: " << solution.size() << std::endl;
+
+			Square sol = sq;
+			for (e_move move: solution)
+			{
+				sol.make_move(move);
+				sol.print_board();
+				std::cout << "------------------------------\n";
+			}
+		}
+		else {
+			std::cout << "no solution\n";
+		}
 	}
 	catch(const std::exception& e)
 	{
