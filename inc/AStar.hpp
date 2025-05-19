@@ -20,15 +20,16 @@ class AStar
             }
         };
 
-        struct SquareHash
+    struct SquareHash {
+        size_t operator()(const std::vector<uint> &sq) const
         {
-            size_t operator()(const Square &sq) const
+            std::size_t hash = 0;
+            for (uint val : sq)
             {
-                size_t hash = 0;
-                for (uint n : sq._board)
-                    hash *= 31 + n;
-                return hash;
+                hash ^= std::hash<uint>{}(val) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
             }
-        };
+            return hash;
+        }
+    };
 
 };

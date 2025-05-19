@@ -49,4 +49,5 @@ std::vector<e_move> AStar::solve(Square init)
             }
         }
     }
+    return {};
 }
