@@ -9,7 +9,7 @@
 class AStar
 {
     public:
-        static std::vector<e_move> solve(Square ini);
+        static std::vector<e_move> solve(Square init, Node::Heuristic heuristic, Node::Type type);
 
     private:
         struct NodePtr
@@ -31,5 +31,4 @@ class AStar
             return hash;
         }
     };
-
 };

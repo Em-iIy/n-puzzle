@@ -27,9 +27,8 @@ class Square
 		int			manhattan_distance() const;
 
 		void		shuffle_board();
-		bool		check_solvable();
-		bool		check_solvable(const std::vector<int>& goal);
-		
+		bool		check_solvable(const Square& goal);
+
 		bool		make_move(e_move move);
 		bool		check_pos(const Pos &pos) const;
 		
@@ -41,6 +40,8 @@ class Square
 		const uint	&get_cnum(const Pos &pos) const;
 		void		set_num(const Pos &pos, const uint num);
 		
+		void		set_solved();
+
 		bool	operator==(const Square &rhs) const;
 		bool	operator!=(const Square &rhs) const;
 	
