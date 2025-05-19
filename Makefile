@@ -10,6 +10,7 @@ FILES_SRCS =	main.cpp \
 				Parsing.cpp \
 				Node.cpp \
 				AStar.cpp \
+				Options.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 
