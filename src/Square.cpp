@@ -75,7 +75,25 @@ int			Square::hamming_distance()
 		if (get_cnum((*_final_positions)[i]) != i)
 			count++;
 	}
-	return (count * 10);
+	return (count);
+}
+
+int			Square::manhattan_distance() const {
+	int count = 0;
+	for (uint i = 1; i <= _n; ++i)
+	{
+		const Pos curr = get_pos(i);
+		const Pos goal = (*_final_positions)[i];
+
+		const int curr_x = static_cast<int>(curr.x);
+		const int curr_y = static_cast<int>(curr.y);
+		const int goal_x = static_cast<int>(goal.x);
+		const int goal_y = static_cast<int>(goal.y);
+
+		const int distance = std::abs(curr_x - goal_x) + std::abs(curr_y - goal_y);
+		count += distance;
+	}
+	return count;
 }
 
 // Randomly shuffle the board's numbers
@@ -125,48 +143,56 @@ shared_pos_vec init_solved_pos(uint len_side)
 	return (final_positions);
 }
 
-bool Square::check_solvable() // REWRITE
+bool		Square::check_solvable(const Square &goal)
 {
-	std::vector<int> remapped;
-
-	// Map: goal position -> flat index
-	std::vector<int> goal_indices(_board.size()); // value -> flattened index
-	for (int val = 0; val < _final_positions->size(); ++val)
+	int initial_0_tile;
+	int initial_inversions = 0;
+	for (int i = 0; i < _board.size(); ++i)
 	{
-		const Pos& p = (*_final_positions)[val];
-		goal_indices[val] = p.y * _len_side + p.x;
-	}
-
-	// Remap current board values to their goal indices
-	for (int val : _board)
-	{
-		if (val != 0)
-			remapped.push_back(goal_indices[val]);
-	}
-
-	// Count inversions in remapped vector
-	int inversions = 0;
-	for (int i = 0; i < remapped.size(); ++i)
-	{
-		for (int j = i + 1; j < remapped.size(); ++j)
+		if (_board[i] == 0)
 		{
-			if (remapped[i] > remapped[j])
-				inversions++;
+			initial_0_tile = i;
+			continue ;
+		}
+		for (int j = i + 1; j < _board.size(); ++j)
+		{
+			if (_board[j] == 0)
+				continue ;
+			if (_board[i] > _board[j])
+			{
+				initial_inversions++;
+			}
 		}
 	}
 
-	// Apply solvability rules
-	if (_len_side % 2 != 0)
+	int goal_0_tile;
+	int goal_inversions = 0;
+	for (int i = 0; i < goal._board.size(); ++i)
 	{
-		// Odd grid: solvable if inversion count is even
-		return inversions % 2 == 0;
+		if (goal._board[i] == 0)
+		{
+			goal_0_tile = i;
+			continue ;
+		}
+		for (int j = i + 1; j < goal._board.size(); ++j)
+		{
+			if (goal._board[j] == 0)
+				continue ;
+			if (goal._board[i] > goal._board[j])
+				goal_inversions++;
+		}
 	}
+	if (_len_side % 2 == 1)
+		return (initial_inversions % 2 == goal_inversions % 2);
+	int diff = _0.y + goal._0.y;
+	if (goal_inversions % 2 == 0)
+		return (((initial_inversions % 2) + (diff % 2)) % 2 == 0);
 	else
-	{
-		// Even grid: solvable if blank row from bottom and inversion parity are opposite
-		return (_len_side - _0.y % 2 == 0) != (inversions % 2 == 0);
-	}
+		return (!(((initial_inversions % 2) + (diff % 2)) % 2 == 0));
+	
 }
+
+
 
 // Check if positions is valid within the board's coordinates
 bool		Square::check_pos(const Pos &pos) const
@@ -244,6 +270,13 @@ const uint	&Square::get_cnum(const Pos &pos) const
 void		Square::set_num(const Pos &pos, const uint num)
 {
 	get_num(pos) = num;
+}
+
+void		Square::set_solved()
+{
+	for (uint i = 0; i < _final_positions->size(); ++i)
+		set_num((*_final_positions)[i], i);
+	_0 = get_pos(0);
 }
 
 bool	Square::operator==(const Square &rhs) const
