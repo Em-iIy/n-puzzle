@@ -26,8 +26,6 @@ Square::Square(uint n, shared_pos_vec final_positions): _n((n * n) - 1), _len_si
 }
 
 // Initialize the square using a vector of unsigned ints
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// Use this constructor after parsing in the file, I haven't tested if this works
 Square::Square(std::vector<uint> &board, shared_pos_vec final_positions): _n(board.size() - 1), _len_side(sqrt(board.size())), _board(board), _final_positions(final_positions)
 {
 	// Find position of the 0 piece
