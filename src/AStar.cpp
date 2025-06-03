@@ -1,35 +1,78 @@
 #include "AStar.hpp"
 #include <algorithm>
 
-std::vector<e_move> AStar::solve(Square init, Node::Heuristic heuristic, Node::Type type)
+std::ostream	&operator<<(std::ostream &o, const Result &result)
+{
+	o << "Hueristic:\t\t";
+	switch (result.heuristic)
+	{
+	case Node::MANHATTAN:
+		o << "Manhattan";
+		break;
+	case Node::HAMMING:
+		o << "Hamming";
+		break;
+	case Node::LINEAR:
+		o << "Linear";
+		break;
+	default:
+		break;
+	}
+	o << std::endl;
+	o << "Type:\t\t\t";
+	switch (result.type)
+	{
+	case Node::ASTAR:
+		o << "Default";
+		break;
+	case Node::GREEDY:
+		o << "Greedy";
+		break;
+	case Node::UNIFORM:
+		o << "Uniform";
+		break;
+	default:
+		break;
+	}
+	o << std::endl;
+	o << "Moves required:\t\t" << result.solution.size() << std::endl;
+	o << "solution found in:\t" << result.time_elapsed << " ms" << std::endl;
+	o << "Time complexity:\t" << result.time_complexity << std::endl;
+	o << "Size complexity:\t" << result.size_complexity << std::endl;
+	return (o);
+}
+
+Result AStar::solve(Square init, Node::Heuristic heuristic, Node::Type type)
 {
     std::priority_queue<std::shared_ptr<Node>,
                         std::vector<std::shared_ptr<Node>>,
                         NodePtr> open_set;
     std::unordered_map<std::vector<uint>, bool, SquareHash> closed_set;
 
+    std::unordered_map<std::shared_ptr<Node>, e_move> move_map;
+	Result	result = {std::vector<e_move>(), 0.0, 0, 0, heuristic, type};
+
     auto start_node = std::make_shared<Node>(nullptr, init, heuristic, type);
     open_set.push(start_node);
-    std::unordered_map<std::shared_ptr<Node>, e_move> move_map;
-
     while (!open_set.empty())
     {
         auto current = open_set.top();
         open_set.pop();
+		result.time_complexity++;
 
         if (current->_sq.check_board())
         {
-            std::vector<e_move> path;
-            std::shared_ptr<Node> node = current;
+			result.size_complexity = open_set.size() + closed_set.size() + 1; // + 1 for popped node
 
+            std::shared_ptr<Node> node = current;
             while (node != start_node)
             {
-                path.push_back(move_map[node]);
+                result.solution.push_back(move_map[node]);
                 node = node->_parent;
             }
 
-            std::reverse(path.begin(), path.end());
-            return path;
+            std::reverse(result.solution.begin(), result.solution.end());
+            return result;
         }
 
         closed_set[current->_sq._board] = true;
