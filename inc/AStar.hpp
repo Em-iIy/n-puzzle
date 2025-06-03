@@ -6,10 +6,22 @@
 #include "Node.hpp"
 #include "Square.hpp"
 
+struct Result
+{
+	std::vector<e_move>	solution;
+	double				time_elapsed;
+	uint64_t			time_complexity;
+	uint64_t			size_complexity;
+	Node::Heuristic		heuristic;
+	Node::Type			type;
+};
+
+std::ostream	&operator<<(std::ostream &o, const Result &result);
+
 class AStar
 {
     public:
-        static std::vector<e_move> solve(Square init, Node::Heuristic heuristic, Node::Type type);
+        static Result solve(Square init, Node::Heuristic heuristic, Node::Type type);
 
     private:
         struct NodePtr

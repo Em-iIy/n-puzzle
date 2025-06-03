@@ -32,7 +32,7 @@ CC = c++
 CFLAGS = -std=c++20
 CFLAGS += -O3
 # CFLAGS += -Wall -Wextra -Werror
-CFLAGS += -g -fsanitize=address
+# CFLAGS += -g -fsanitize=address
 
 INC =  -Iinc
 
