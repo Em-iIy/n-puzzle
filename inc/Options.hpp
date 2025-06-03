@@ -13,6 +13,7 @@ class Options
 		bool						_file = false;
 		std::string					_filename;
 		int							_n;
+		int32_t						_mem_limit = 0;
 		int							_shuffle = 0;
 		bool						_visualize = false;
 

@@ -3,6 +3,7 @@
 #include "rand.hpp"
 
 #include <cmath>
+#include <sys/resource.h>
 
 static void	usage(const std::string &arg0)
 {
@@ -20,7 +21,17 @@ static void	usage(const std::string &arg0)
 	//						uniform
 	// -s number		specify how many moves you want to shuffle the board (-n must be given)
 	// -f file			specify input file containing a puzzle
+	// -l count			limit memory usage to count * MB
 	// -v				visualize
+}
+
+static void limit_memory(int64_t mb)
+{
+	int64_t bytes = mb * (1024 * 1024);
+	struct rlimit memlimit;
+	memlimit.rlim_cur = bytes;
+	memlimit.rlim_max = bytes;
+	setrlimit(RLIMIT_AS, &memlimit);
 }
 
 Node::Heuristic	check_heuristic(const std::string &str)
@@ -49,11 +60,14 @@ Options::Options(int argc, char **argv)
 {
 	if (argc < 3)
 	{
-		usage(argv[0]);
+		if (argc < 1)
+			usage("n-puzzle");
+		else
+			usage(argv[0]);
 		throw std::runtime_error("");
 	}
 	int opt;
-	while ((opt = getopt(argc, argv, "n:h:t:s:f:v")) != -1)
+	while ((opt = getopt(argc, argv, "n:h:t:s:f:l:v")) != -1)
 	{
 		switch (opt)
 		{
@@ -80,6 +94,11 @@ Options::Options(int argc, char **argv)
 			case 'v':
 				_visualize = true;
 				break;
+			case 'l':
+				_mem_limit = std::stoi(optarg);
+				if (_mem_limit < 1)
+					throw std::runtime_error("memory limit must be greater than 0MB");
+				break;
 			default:
 				throw std::runtime_error("invalid usage");
 				break;
@@ -90,6 +109,8 @@ Options::Options(int argc, char **argv)
 		_heuristics.push_back(Node::MANHATTAN);
 	if (_types.size() == 0)
 		_types.push_back(Node::ASTAR);
+	if (_mem_limit != 0)
+		limit_memory(_mem_limit);
 }
 
 Options::~Options() {};
