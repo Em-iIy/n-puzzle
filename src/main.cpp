@@ -76,6 +76,7 @@ int main(const int argc, char *argv[])
 				catch(const std::bad_alloc &e)
 				{
 					std::cerr << "Memory limit " << options._mem_limit << "MB reached after " << timer::ms_elapsed() << "ms" << std::endl;
+					std::cerr << "Timing of following results might be inaccurate." << std::endl;
 				}
 			}
 		}
