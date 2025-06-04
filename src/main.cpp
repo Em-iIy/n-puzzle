@@ -3,9 +3,6 @@
 #include <vector>
 #include <algorithm>
 
-#include <thread>
-#include <chrono>
-
 #include "Square.hpp"
 #include "Node.hpp"
 #include "rand.hpp"
@@ -14,7 +11,21 @@
 #include "AStar.hpp"
 #include "Options.hpp"
 
-void	print_results(Options &options, Square &base, std::vector<Result> &results)
+static void	usage(const std::string &arg0)
+{
+	std::cerr << "Usage:\n" << arg0;
+	std::cerr << "\t(-f <filename> | -n <num>) [-v] [-h heuristic] [-t type] [-s count] [-l size]" << std::endl << std::endl;
+	std::cerr << "\tThe options are:" << std::endl << std::endl;
+	std::cerr << "\t-f file\t\tSpecify input file containing a puzzle" << std::endl << std::endl;
+	std::cerr << "\t-n size\t\tSpecify the length of the side of the board\n\t\t\twithout option -s, will generate a completely random but solvable board" << std::endl << std::endl;
+	std::cerr << "\t-h heuristic\tSpecify one heuristic to solve with (default = manhattan distance)\n\t\t\t\t- manhattan\n\t\t\t\t- hamming\n\t\t\t\t- linear" << std::endl << std::endl;
+	std::cerr << "\t-t type\t\tSpecify alternative type\n\t\t\t\t- default\n\t\t\t\t- greedy\n\t\t\t\t- uniform" << std::endl << std::endl;
+	std::cerr << "\t-s count\tShuffle the board count amount of times\n\t\t\tonly works with option -n" << std::endl << std::endl;
+	std::cerr << "\t-l count\tLimit memory allocation to count * MB" << std::endl << std::endl;
+	std::cerr << "\t-v\t\tVisualize the steps to solve the board" << std::endl << std::endl;
+}
+
+static void	print_results(Options &options, Square &base, std::vector<Result> &results)
 {
 	if (results.size() == 0)
 		return ;
@@ -85,6 +96,10 @@ int main(const int argc, char *argv[])
 	catch(const std::exception& e)
 	{
 		std::cerr << "ERROR: " << e.what() << '\n';
+		if (argc < 1)
+			usage("n-puzzle");
+		else
+			usage(argv[0]);
 		return (1);
 	}
 }

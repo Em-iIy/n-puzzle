@@ -2,8 +2,8 @@
 
 #include "Node.hpp"
 #include "Square.hpp"
-#include <vector>
 
+#include <vector>
 
 class Options
 {
@@ -12,7 +12,7 @@ class Options
 		std::vector<Node::Type>		_types;
 		bool						_file = false;
 		std::string					_filename;
-		int							_n;
+		int							_n = 0;
 		int32_t						_mem_limit = 0;
 		int							_shuffle = 0;
 		bool						_visualize = false;
