@@ -19,6 +19,7 @@ void	Node::set_h(Heuristic heuristic)
 		break;
 
 	case LINEAR:
+		_h = _sq.linear_conflict();
 		break;
 
 	default:
