@@ -21,6 +21,7 @@ class Square
 		Square(uint n, shared_pos_vec final_positions);
 		Square(std::vector<uint> &board, shared_pos_vec final_positions);
 		Square(const Square &src);
+		Square		&operator=(const Square&);
 		~Square();
 
 		int			hamming_distance() const;

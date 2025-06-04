@@ -33,7 +33,7 @@ void	Node::set_g()
 		_g = _parent->_g + 1;
 }
 
-Node::Node(std::shared_ptr<Node> parent, Square &sq, Heuristic heuristic, Type type): _sq(sq), _g(0), _h(0), _parent(parent)
+Node::Node(std::shared_ptr<Node> parent, Square &sq, Heuristic heuristic, Type type): _g(0), _h(0), _sq(sq), _parent(parent)
 {
 	switch (type)
 	{

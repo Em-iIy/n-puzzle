@@ -36,6 +36,20 @@ Square::Square(const Square &src): _n(src._n), _len_side(src._len_side), _0(src.
 {
 }
 
+Square	&Square::operator=(const Square &rhs)
+{
+	if (*this == rhs)
+		return (*this);
+
+	_n = rhs._n;
+	_len_side = rhs._len_side;
+	_0 = rhs._0;
+	_board = rhs._board;
+	_final_positions = rhs._final_positions;
+
+	return (*this);
+}
+
 Square::~Square() {}
 
 // Swaps the 0 piece up up, down, left or right
@@ -197,16 +211,12 @@ shared_pos_vec init_solved_pos(uint len_side)
 bool		Square::check_solvable(const Square &goal)
 {
 	// Check parity of starting state
-	int initial_0_tile;
 	int initial_inversions = 0;
-	for (int i = 0; i < _board.size(); ++i)
+	for (uint i = 0; i < _board.size(); ++i)
 	{
 		if (_board[i] == 0)
-		{
-			initial_0_tile = i;
 			continue ;
-		}
-		for (int j = i + 1; j < _board.size(); ++j)
+		for (uint j = i + 1; j < _board.size(); ++j)
 		{
 			if (_board[j] == 0)
 				continue ;
@@ -218,16 +228,12 @@ bool		Square::check_solvable(const Square &goal)
 	}
 
 	// Check parity of goal state
-	int goal_0_tile;
 	int goal_inversions = 0;
-	for (int i = 0; i < goal._board.size(); ++i)
+	for (uint i = 0; i < goal._board.size(); ++i)
 	{
 		if (goal._board[i] == 0)
-		{
-			goal_0_tile = i;
 			continue ;
-		}
-		for (int j = i + 1; j < goal._board.size(); ++j)
+		for (uint j = i + 1; j < goal._board.size(); ++j)
 		{
 			if (goal._board[j] == 0)
 				continue ;
@@ -281,7 +287,7 @@ void	Square::print_board() const
 // Count how many numbers are in the right position
 bool	Square::check_board()
 {
-	int count = 0;
+	uint count = 0;
 	for (uint i = 0; i < _final_positions->size(); ++i)
 	{
 		if (get_cnum((*_final_positions)[i]) == i)

@@ -31,7 +31,7 @@ OBJS = $(FILES_OBJS:%=$(DIR_OBJS)%)
 CC = c++
 CFLAGS = -std=c++20
 CFLAGS += -O3
-# CFLAGS += -Wall -Wextra -Werror
+CFLAGS += -Wall -Wextra -Werror
 # CFLAGS += -g -fsanitize=address
 
 INC =  -Iinc
