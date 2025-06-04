@@ -23,8 +23,10 @@ class Square
 		Square(const Square &src);
 		~Square();
 
-		int			hamming_distance();
+		int			hamming_distance() const;
 		int			manhattan_distance() const;
+		int			linear_conflict() const;
+
 
 		void		shuffle_board();
 		bool		check_solvable(const Square& goal);

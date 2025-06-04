@@ -67,7 +67,7 @@ bool		Square::make_move(e_move move)
 	return (true);
 }
 
-int			Square::hamming_distance()
+int			Square::hamming_distance() const
 {
 	int count = 0;
 	for (uint i = 1; i < _final_positions->size(); ++i)
@@ -94,6 +94,57 @@ int			Square::manhattan_distance() const {
 		count += distance;
 	}
 	return count;
+}
+
+int Square::linear_conflict() const
+{
+	int conflicts = 0;
+
+	// Row conflicts
+	for (uint row = 0; row < _len_side; ++row)
+	{
+		for (uint i = 0; i < _len_side; ++i)
+		{
+			uint tile1 = get_cnum(Pos(i, row));
+			if (tile1 == 0 || (*_final_positions)[tile1].y != row)
+				continue;
+
+			for (uint j = i + 1; j < _len_side; ++j)
+			{
+				uint tile2 = get_cnum(Pos(j, row));
+				if (tile2 == 0 || (*_final_positions)[tile2].y != row)
+					continue;
+
+				if ((*_final_positions)[tile1].x > (*_final_positions)[tile2].x)
+					++conflicts;
+			}
+		}
+	}
+
+	// Column conflicts
+	for (uint col = 0; col < _len_side; ++col)
+	{
+		for (uint i = 0; i < _len_side; ++i)
+		{
+			uint tile1 = get_cnum(Pos(col, i));
+			if (tile1 == 0 || (*_final_positions)[tile1].x != col)
+				continue ;
+
+			for (uint j = i + 1; j < _len_side; ++j)
+			{
+				uint tile2 = get_cnum(Pos(col, j));
+				if (tile2 == 0 || (*_final_positions)[tile2].x != col)
+					continue ;
+
+				if ((*_final_positions)[tile1].y > (*_final_positions)[tile2].y)
+				{
+					++conflicts;
+				}
+			}
+		}
+	}
+
+	return (2 * conflicts); // Each conflict adds 2 moves to resolution
 }
 
 // Randomly shuffle the board's numbers
@@ -145,6 +196,7 @@ shared_pos_vec init_solved_pos(uint len_side)
 
 bool		Square::check_solvable(const Square &goal)
 {
+	// Check parity of starting state
 	int initial_0_tile;
 	int initial_inversions = 0;
 	for (int i = 0; i < _board.size(); ++i)
@@ -165,6 +217,7 @@ bool		Square::check_solvable(const Square &goal)
 		}
 	}
 
+	// Check parity of goal state
 	int goal_0_tile;
 	int goal_inversions = 0;
 	for (int i = 0; i < goal._board.size(); ++i)
@@ -182,6 +235,8 @@ bool		Square::check_solvable(const Square &goal)
 				goal_inversions++;
 		}
 	}
+
+	// If both parities match, the square can go from starting state, to the goal state
 	if (_len_side % 2 == 1)
 		return (initial_inversions % 2 == goal_inversions % 2);
 	int diff = _0.y + goal._0.y;
@@ -207,12 +262,8 @@ bool		Square::check_pos(const Pos &pos) const
 // Prints board and highlights the solved numbers green
 void	Square::print_board() const
 {
-	for (uint x = 0; x < _len_side; ++x)
-		std::cout << "\t" << BG_BLUE << x << RESET;
-	std::cout << std::endl;
 	for (uint y = 0; y < _len_side; ++y)
 	{
-		std::cout << BG_BLUE << y << RESET << "\t";
 		for (uint x = 0; x < _len_side; ++x)
 		{
 			Pos pos(x, y);

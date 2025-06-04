@@ -13,7 +13,7 @@ std::ostream	&operator<<(std::ostream &o, const Result &result)
 		o << "Hamming";
 		break;
 	case Node::LINEAR:
-		o << "Linear";
+		o << "Linear Conflict";
 		break;
 	default:
 		break;
@@ -52,7 +52,7 @@ Result AStar::solve(Square init, Node::Heuristic heuristic, Node::Type type)
     std::unordered_map<std::shared_ptr<Node>, e_move> move_map;
 	Result	result = {std::vector<e_move>(), 0.0, 0, 0, heuristic, type};
 
-    auto start_node = std::make_shared<Node>(nullptr, init, heuristic, type);
+    std::shared_ptr<Node> start_node = std::make_shared<Node>(nullptr, init, heuristic, type);
     open_set.push(start_node);
     while (!open_set.empty())
     {

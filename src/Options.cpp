@@ -5,26 +5,6 @@
 #include <cmath>
 #include <sys/resource.h>
 
-static void	usage(const std::string &arg0)
-{
-	std::cerr << "Usage:\t" << arg0 << " -f <filename>\n";
-	std::cerr << "\t" << arg0 << " -n <num>\n";
-	// options:
-	// -n size			specify the lenght of one side of the board
-	// -h heuristic		specify one heuristic to solve with (default = manhattan distance)
-	//						manhattan
-	//						hamming
-	//						linear
-	// -t type			specify alternative type
-	//						default
-	//						greedy
-	//						uniform
-	// -s number		specify how many moves you want to shuffle the board (-n must be given)
-	// -f file			specify input file containing a puzzle
-	// -l count			limit memory usage to count * MB
-	// -v				visualize
-}
-
 static void limit_memory(int64_t mb)
 {
 	int64_t bytes = mb * (1024 * 1024);
@@ -59,20 +39,21 @@ Node::Type	check_type(const std::string &str)
 Options::Options(int argc, char **argv)
 {
 	if (argc < 3)
-	{
-		if (argc < 1)
-			usage("n-puzzle");
-		else
-			usage(argv[0]);
-		throw std::runtime_error("");
-	}
+		throw std::runtime_error("missing options");
 	int opt;
 	while ((opt = getopt(argc, argv, "n:h:t:s:f:l:v")) != -1)
 	{
 		switch (opt)
 		{
 			case 'n':
-				_n = std::stoi(optarg);
+				try
+				{
+					_n = std::stoi(optarg);
+				}
+				catch(const std::exception& e)
+				{
+					throw std::runtime_error("invalid number");
+				}
 				if (_n < 1)
 					throw std::runtime_error("n must be greater than 0");
 				break;
@@ -83,7 +64,14 @@ Options::Options(int argc, char **argv)
 				_types.push_back(check_type(std::string(optarg)));
 				break;
 			case 's':
-				_shuffle = std::stoi(optarg);
+				try
+				{
+					_shuffle = std::stoi(optarg);
+				}
+				catch(const std::exception& e)
+				{
+					throw std::runtime_error("invalid number");
+				}
 				if (_shuffle < 1)
 					throw std::runtime_error("shuffle must be greater than 0");
 				break;
@@ -95,7 +83,14 @@ Options::Options(int argc, char **argv)
 				_visualize = true;
 				break;
 			case 'l':
-				_mem_limit = std::stoi(optarg);
+				try
+				{
+					_mem_limit = std::stoi(optarg);
+				}
+				catch(const std::exception& e)
+				{
+					throw std::runtime_error("invalid number");
+				}
 				if (_mem_limit < 1)
 					throw std::runtime_error("memory limit must be greater than 0MB");
 				break;
@@ -104,6 +99,8 @@ Options::Options(int argc, char **argv)
 				break;
 		}
 	}
+	if (!_file && !_n)
+		throw std::runtime_error("missing option -n or -f");
 	// If no type or heuristic specified, set to defaults
 	if (_heuristics.size() == 0)
 		_heuristics.push_back(Node::MANHATTAN);
