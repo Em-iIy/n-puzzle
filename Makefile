@@ -36,18 +36,6 @@ CFLAGS += -Wall -Wextra -Werror
 
 INC =  -Iinc
 
-# ----------------------------------------Debug
-ifdef DEBUG_MODE
-CFLAGS += -g -fsanitize=address
-DFLAGS += -DDEBUG_MODE=\"1\"
-endif
-
-# ----------------------------------------Logs
-ifdef LOG_MODE
-DFLAGS += -DLOG_MODE
-DFLAGS += -DDEBUG_MODE=\"2\"
-endif
-
 # ----------------------------------------Making
 all:
 	@$(MAKE) $(NAME) -j4
@@ -62,16 +50,6 @@ $(DIR_OBJS)%.o: %.cpp
 
 $(DIR_OBJS):
 	mkdir -p $@
-
-# ----------------------------------------Debug
-debug:
-	$(MAKE) re DEBUG_MODE=1
-.PHONY: debug
-
-# ----------------------------------------Logs
-log:
-	$(MAKE) re LOG_MODE=1
-.PHONY: log
 
 # ----------------------------------------Cleaning
 clean:

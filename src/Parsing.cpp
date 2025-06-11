@@ -43,7 +43,7 @@ std::vector<uint> parse_puzzle(const std::string& filename)
 
     int N;
     std::istringstream size_stream(lines[0]);
-    if (!(size_stream >> N) || N < 2)
+    if (!(size_stream >> N) || N < 1)
         throw std::invalid_argument("Invalid grid size (must be >= 2)");
 
     if (lines.size() < static_cast<size_t>(N + 1))
